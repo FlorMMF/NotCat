@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.Mtimes.notcat.presentation.PrincipalScreen
+import com.Mtimes.notcat.presentation.RegisterScreen
 import com.Mtimes.notcat.ui.theme.NotCatTheme
 
 class MainActivity : ComponentActivity() {
@@ -22,8 +23,9 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     modifier = Modifier.fillMaxSize())
                 { innerPadding ->
-                    PrincipalScreen(
+                    RegisterScreen(
                         navController = navController,
+                        onRegistrar = { _, _, _, _, _ ->},
                         Modifier.padding(innerPadding))
                 }
             }
