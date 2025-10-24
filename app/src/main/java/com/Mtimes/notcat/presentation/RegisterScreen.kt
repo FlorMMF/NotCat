@@ -1,9 +1,6 @@
 package com.Mtimes.notcat.presentation
 
-import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +14,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,28 +33,38 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.Mtimes.notcat.R
+import androidx.compose.runtime.derivedStateOf
 
+import com.Mtimes.notcat.model.UserVM
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun RegisterScreen(navController: NavHostController, onRegistrar: (String, String, String, String, android.content.Context) -> Unit, padding: Modifier){
+
+    val context = LocalContext.current
 
     var nomUsuario by remember { mutableStateOf("") }
     var correo by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
     var confirmContrasena by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
 
-    val context = LocalContext.current
-    val errorMessage by remember { mutableStateOf("") }
-
-    val errorText by remember(correo, confirmContrasena){
+    val errorText by derivedStateOf {
         when {
-            correo.isEmpty() && confirmContrasena.isEmpty() -> mutableStateOf("")
-            correo == confirmContrasena -> mutableStateOf("")
-            else -> mutableStateOf("Los correos no coinciden.")
+            contrasena.isEmpty() && confirmContrasena.isEmpty() -> mutableStateOf("")
+            contrasena == confirmContrasena -> mutableStateOf("")
+            else -> mutableStateOf("Las contrasenas no coinciden.")
         }
     }
 
-    val esValido = correo.isNotEmpty() && confirmContrasena.isNotEmpty() && errorText.isEmpty()
+    val esValido by derivedStateOf {
+        nomUsuario.isNotEmpty() &&
+                correo.isNotEmpty() &&
+                contrasena.isNotEmpty() &&
+                confirmContrasena.isNotEmpty() &&
+                contrasena == confirmContrasena
+                //errorText.isEmpty()
+    }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -109,7 +117,7 @@ fun RegisterScreen(navController: NavHostController, onRegistrar: (String, Strin
             FilledTonalButton(
                 onClick = {
                     onRegistrar(nomUsuario,correo,contrasena,confirmContrasena,context)
-                    /*println("Se ha registrado exitosamente")*/
+                    //println("Se ha registrado exitosamente")
 
                 },
                 enabled = esValido,
@@ -138,38 +146,4 @@ fun RegisterScreen(navController: NavHostController, onRegistrar: (String, Strin
 @Composable
 fun LoginScreenPreview() {
     RegisterScreen(navController = rememberNavController(), onRegistrar = { _, _, _, _, _ ->}, Modifier)
-}
-
-
-
-/////metodos
-data class Usuario(val nomUs: String, val correo: String, val contra: String)
-
-class RegisterActivity: ComponentActivity(){
-    private val listaUsuarios = mutableListOf<Usuario>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent{
-            val navController = rememberNavController()
-            RegisterScreen(navController, onRegistrar = { nomUsuario, correo, contra, confirmContra, context ->
-                when {
-                    nomUsuario.isBlank() || correo.isBlank() || contra.isBlank() || confirmContra.isBlank() ->{
-                        Toast.makeText(context, "Es necesario que todos los campos esten llenos", Toast.LENGTH_SHORT)
-                    }
-                    contra != confirmContra -> {
-                        Toast.makeText(context, "Las contraseñas no coinciden", Toast.LENGTH_SHORT)
-                    }
-
-                    //Aqui podria agregarse la verificación del nombre de usuario y correo de que no esten ya registrados en la BD
-                    else -> {
-                        val nuevo = Usuario(nomUsuario, correo, contra)
-                        listaUsuarios.add(nuevo)
-                        Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }, Modifier)
-        }
-    }
-
 }
