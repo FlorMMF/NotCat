@@ -1,4 +1,4 @@
-
+package com.Mtimes.notcat.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +16,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.Mtimes.notcat.R
+import com.Mtimes.notcat.navigation.Screen
 
 
 @Composable
@@ -90,6 +92,19 @@ fun LoginScreen(navController: NavHostController) {
             ){
                 Text("Entrar")
             }
+
+
+
+            TextButton(
+                onClick = {
+                    navController.navigate(Screen.register.route) {
+                        launchSingleTop = true
+                    }
+                }
+            ) {
+                Text("Aún no registrado? Registrate aquí")
+            }
+
 
             if (errorMessage.isNotEmpty()) {
                 Text(

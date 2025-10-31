@@ -13,6 +13,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -36,10 +37,11 @@ import com.Mtimes.notcat.R
 import androidx.compose.runtime.derivedStateOf
 
 import com.Mtimes.notcat.model.UserVM
+import com.Mtimes.notcat.navigation.Screen
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun RegisterScreen(navController: NavHostController, onRegistrar: (String, String, String, String, android.content.Context) -> Unit, padding: Modifier){
+fun RegisterScreen(navController: NavHostController, onRegistrar: (String, String, String, String, android.content.Context) -> Unit){
 
     val context = LocalContext.current
 
@@ -137,6 +139,8 @@ fun RegisterScreen(navController: NavHostController, onRegistrar: (String, Strin
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
+
+
         }
     }
 
@@ -144,6 +148,6 @@ fun RegisterScreen(navController: NavHostController, onRegistrar: (String, Strin
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun LoginScreenPreview() {
-    RegisterScreen(navController = rememberNavController(), onRegistrar = { _, _, _, _, _ ->}, Modifier)
+fun RegisterScreenPreview() {
+    RegisterScreen(navController = rememberNavController(), onRegistrar = { _, _, _, _, _ ->})
 }

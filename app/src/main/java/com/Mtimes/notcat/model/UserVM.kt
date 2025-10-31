@@ -45,7 +45,7 @@ class RegisterActivity: ComponentActivity(){
                     }
                 }
             }
-                , Modifier)
+            )
         }
     }
 }
