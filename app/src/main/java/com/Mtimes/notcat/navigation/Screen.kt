@@ -9,4 +9,8 @@ sealed class Screen (
 ){
     @Serializable
     object login : Screen(route = "login_screen", label = "Login")
+
+    @Serializable
+    object register : Screen(route = "register_screen", label = "Register")
+
 }

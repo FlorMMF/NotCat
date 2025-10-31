@@ -1,5 +1,6 @@
 package com.Mtimes.notcat
 
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -7,9 +8,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.Mtimes.notcat.presentation.PrincipalScreen
+import com.Mtimes.notcat.navigation.AppNavHost
+import com.Mtimes.notcat.presentation.LoginScreen
 import com.Mtimes.notcat.ui.theme.NotCatTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,12 +22,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             NotCatTheme {
                 val navController = rememberNavController()
-                Scaffold(
+                Surface(
                     modifier = Modifier.fillMaxSize())
-                { innerPadding ->
-                    PrincipalScreen(
-                        navController = navController,
-                        Modifier.padding(innerPadding))
+                {
+                    AppNavHost(navController = navController)
                 }
             }
         }
