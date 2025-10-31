@@ -1,5 +1,6 @@
 package com.Mtimes.notcat.data
 
+
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
@@ -21,6 +22,20 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                                 "$NAME_COL TEXT, " +
                                 "$EMAIL_COL TEXT, " +
                                 "$PASS_COL TEXT)"
+
+
+                    )
+
+                    db.execSQL(
+                        "CREATE TABLE $TABLE_RMND (" +
+                                "$ID_RMND INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                                "$USER_RMND TEXT, " +
+                                "$TITLE_RMND TEXT, " +
+                                "$DESCRIPTION_RMND TEXT," +
+                                "$DATE_RMND TEXT,"
+                                + "$TIME_RMND INTEGER,"
+                                + "$REPEAT_RMND INTEGER)"
+
                     )
                     Log.d("DB", "onCreate: tabla creada correctamente")
                 } catch (e: Exception) {
@@ -58,6 +73,8 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             }
             return id
         }
+
+
 
     fun checkUser(user_name: String): Boolean {
         val sqLiteDatabase = this.readableDatabase
@@ -103,30 +120,30 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         return b
     }
 
-    fun checkPass(user_password: String): Boolean {
-        val sqLiteDatabase = this.readableDatabase
+    fun addRemind (user: String, title: String, descripition: String, date: String, time: Int, repeat: Int): Long{
+        //la fun insert deberia devolver el id (0...n) si no lo hace se manda -1 como error
+        var id: Long = -1
 
-        val columns = arrayOf<String>(PASS_COL)
-        val selection: String = PASS_COL + " LIKE ?" // WHERE nombre LIKE ?
-        val selectionArgs = arrayOf(user_password)
+        val databaseAccess : SQLiteDatabase = getWritableDatabase()
+        val values = ContentValues().apply{
+            put(USER_RMND, user)
+            put(TITLE_RMND,title)
+            put(DESCRIPTION_RMND, descripition)
+            put(DATE_RMND, date)
+            put(TIME_RMND, time)
+            put(REPEAT_RMND, repeat)
 
-        val c = sqLiteDatabase.query(
-            TABLE_NAME,
-            columns,
-            selection,
-            selectionArgs,
-            null,
-            null,
-            null
-        )
+        }
 
-        val b = c.count > 0
-        c.close()
-        return b
+        try{
+            id= databaseAccess.insert(TABLE_RMND, null, values)
+        }catch(e: Exception){
+            Log.e("DB", "Error al guardar el usuario", e)
+        }
+        return id
     }
 
-
-        //para las variables de objetos
+    //para las variables de objetos
         companion object {
             private const val DATABASE_NAME = "REMINDERS_APP"
             private const val DATABASE_VERSION = 7
@@ -135,5 +152,14 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             const val NAME_COL = "name"
             const val EMAIL_COL = "email"
             const val PASS_COL = "password"
+            const val TABLE_RMND = "reminder"
+            const val ID_RMND = "id"
+            const val USER_RMND = "user"
+            const val TITLE_RMND = "title"
+            const val DESCRIPTION_RMND = "description"
+            const val DATE_RMND = "date"
+            const val TIME_RMND = "time"
+            const val REPEAT_RMND = "repeat"
+
         }
     }
