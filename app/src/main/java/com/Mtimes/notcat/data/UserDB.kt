@@ -22,6 +22,24 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                                 "$EMAIL_COL TEXT, " +
                                 "$PASS_COL TEXT)"
                     )
+
+                    db.execSQL(
+                        "CREATE TABLE $TABLE_LIST (" +
+                        "$ID_LIST INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "$USER_LIST TEXT, " +
+                        "$NAME_LIST TEXT)"
+                    )
+
+                    db.execSQL(
+                        "CREATE TABLE $TABLE_ITEM (" +
+                        "$ID_ITEM INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "$IDLIST_ITEM INTEGER, " +
+                        "$NAME_ITEM TEXT, " +
+                        "$QUANTITY_ITEM INTEGER, " +
+                        "$PURCHASED_ITEM BOOLEAN)"
+
+                    )
+
                     Log.d("DB", "onCreate: tabla creada correctamente")
                 } catch (e: Exception) {
                     Log.e("DB", "onCreate: error creando la tabla", e)
@@ -32,6 +50,8 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             try {
                 Log.d("DB", "onUpgrade: borrando tabla antigua y recreando")
                 db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
+                db.execSQL("DROP TABLE IF EXISTS $TABLE_LIST")
+                db.execSQL("DROP TABLE IF EXISTS $TABLE_ITEM")
                 onCreate(db)
             } catch (e: Exception) {
                 Log.e("DB", "onUpgrade: error durante upgrade", e)
@@ -105,6 +125,7 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
     fun checkPass(user_password: String): Boolean {
         val sqLiteDatabase = this.readableDatabase
+   
 
         val columns = arrayOf<String>(PASS_COL)
         val selection: String = PASS_COL + " LIKE ?" // WHERE nombre LIKE ?
@@ -126,6 +147,42 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     }
 
 
+
+ fun addList(userID: Int, name: String): Long{
+        var id: Long = -1
+        val databaseAccess : SQLiteDatabase = getWritableDatabase()
+        val values = ContentValues().apply{
+            put(USER_LIST, userID)
+           put(NAME_LIST, name)
+        }
+
+        try{
+            id= databaseAccess.insert(TABLE_LIST, null, values)
+        }catch(e: Exception){
+            Log.e("DB", "Error al guardar la lista", e)
+        }
+        return id
+    }
+
+    fun addItemList(name: String, quantity: Int, purchased: Boolean): Long{
+        var id: Long = -1
+
+        val databaseAccess : SQLiteDatabase = getWritableDatabase()
+        val values = ContentValues().apply{
+           put(NAME_ITEM, name)
+            put(QUANTITY_ITEM, quantity)
+            put(PURCHASED_ITEM, purchased)
+        }
+
+        try{
+            id= databaseAccess.insert(TABLE_ITEM, null, values)
+        }catch(e: Exception){
+            Log.e("DB", "Error al guardar el item", e)
+        }
+        return id
+    }
+
+
         //para las variables de objetos
         companion object {
             private const val DATABASE_NAME = "REMINDERS_APP"
@@ -135,5 +192,21 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             const val NAME_COL = "name"
             const val EMAIL_COL = "email"
             const val PASS_COL = "password"
+
+            //para las listas
+            const val TABLE_LIST = "list_info"
+            const val ID_LIST = "id"
+            const val USER_LIST = "user"
+            const val NAME_LIST = "name"
+            //para los items de las listas
+            const val TABLE_ITEM = "item_info"
+            const val ID_ITEM = "id"
+            const val IDLIST_ITEM = "id_list"
+            const val NAME_ITEM = "name"
+            const val QUANTITY_ITEM = "quantity"
+            const val PURCHASED_ITEM = "purchased"
+
+
+
         }
     }
