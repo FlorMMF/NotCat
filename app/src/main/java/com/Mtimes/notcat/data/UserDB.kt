@@ -152,6 +152,7 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             const val NAME_COL = "name"
             const val EMAIL_COL = "email"
             const val PASS_COL = "password"
+
             const val TABLE_RMND = "reminder"
             const val ID_RMND = "id"
             const val USER_RMND = "user"
