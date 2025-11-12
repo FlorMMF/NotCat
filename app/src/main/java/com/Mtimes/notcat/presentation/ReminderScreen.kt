@@ -1,6 +1,8 @@
 package com.Mtimes.notcat.presentation
 
 import android.annotation.SuppressLint
+import android.app.TimePickerDialog
+import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -22,6 +24,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.derivedStateOf
@@ -40,12 +44,23 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import java.text.SimpleDateFormat
 import java.util.Locale
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import java.util.Calendar
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun ReminderScreen(navController: NavHostController, onSaveReminder: (String, String, String, String, Int, Int, android.content.Context) -> Unit){
+fun ReminderScreen(navController: NavHostController, onSaveReminder: (String, String, String, String, Int, String, Context) -> Unit){
     val context = LocalContext.current
     val datePickerState = rememberDatePickerState()
 
@@ -53,16 +68,25 @@ fun ReminderScreen(navController: NavHostController, onSaveReminder: (String, St
     var description by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
     var time by remember { mutableStateOf("") }
-    var repeat by remember { mutableStateOf("") }
+    var repeatOption by remember { mutableStateOf("Nunca") }
 
-    var showDialog by remember { mutableStateOf(false) }
+    val calendar = Calendar.getInstance()
+    val hour = calendar.get(Calendar.HOUR_OF_DAY)
+    val minute = calendar.get(Calendar.MINUTE)
+
+    var showDialogC by remember { mutableStateOf(false) }
+    var showDialogT by remember { mutableStateOf(false) }
+    var activDropmenu by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
+
+    val options = listOf("Nunca", "Cada año", "Cada mes", "Cada semana")
 
     val esValido by derivedStateOf {
         title.isNotEmpty() &&
                 description.isNotEmpty() &&
                 date.isNotEmpty() &&
                 time.isNotEmpty() &&
-                repeat.isNotEmpty()
+                repeatOption.isNotEmpty()
         //errorText.isEmpty()
     }
 
@@ -97,37 +121,56 @@ fun ReminderScreen(navController: NavHostController, onSaveReminder: (String, St
             OutlinedTextField(
                 value = description,
                 onValueChange = { description = it },
-                label = { Text("Descripción") }
+                label = { Text("Descripción") },
+                placeholder = { Text("No olvides los detalles!")},
+                singleLine = false
             )
 
-                    //esto esta mal xd deberia ser un calendario
-
-            FilledTonalButton(
-                onClick = {showDialog= true},
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xCCC7719B),
-                    contentColor = Color.White
-                )
+                    //Fecha y hora
+            Row(
+                modifier = Modifier.padding(6.dp),
+                horizontalArrangement = Arrangement.Center,
             ){
-                Text("Elegir fecha")
+                FilledTonalButton(
+                    onClick = {showDialogC= true},
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xCCC7719B),
+                        contentColor = Color.White
+                    )
+                ){
+                    Text("Elegir fecha")
+                }
+
+
+                FilledTonalButton(
+                    onClick = {showDialogT= true},
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xCCC7719B),
+                        contentColor = Color.White
+                    )
+                ){
+                    Text("Elegir hora")
+                }
             }
 
-                if (showDialog) {
+
+            // pop up del calendario
+                if (showDialogC) {
                     DatePickerDialog(
-                        onDismissRequest = { showDialog = false },
+                        onDismissRequest = { showDialogC = false },
                         confirmButton = {
                             TextButton(onClick = {
                                 datePickerState.selectedDateMillis?.let {
                                     val format = SimpleDateFormat("dd/MM/yyyy", Locale("es", "ES"))
                                     date = format.toString()
                                 }
-                                showDialog = false
+                                showDialogC = false
                             }) {
                                 Text("Confirmar")
                             }
                         },
                         dismissButton = {
-                            TextButton(onClick = { showDialog = false }) {
+                            TextButton(onClick = { showDialogC = false }) {
                                 Text("Cancelar")
                             }
                         }
@@ -144,26 +187,105 @@ fun ReminderScreen(navController: NavHostController, onSaveReminder: (String, St
                     }
                 }
 
+            //pop up del la hora
+            if (showDialogT) {
+                TimePickerDialog(
+                    context,
+                    { _, selectedHour, selectedMinute ->
+                        val cal = Calendar.getInstance()
+                        cal.set(Calendar.HOUR_OF_DAY, selectedHour)
+                        cal.set(Calendar.MINUTE, selectedMinute)
 
-                    //nose si ocupa ser uno diferente segun yo puedes sacar el tiempo del calendario ahorita checo
-            OutlinedTextField(
-                value = time,
-                onValueChange = { time = it},
-                label = { Text("Tiempo") }
-            )
+                        val format = SimpleDateFormat("HH:mm", Locale("es", "ES"))
+                        time = format.format(cal.time)
+                        showDialogT = false
+                    },
+                    hour,
+                    minute,
+                    false
+                ).apply {
+                    setOnDismissListener { showDialogT = false }
+                    show()
+                }
+            }
 
-            OutlinedTextField(
-                value = repeat,
-                onValueChange = { repeat = it},
-                label = { Text("Repetir") }
-            )
+
+            // Repetir Recordatorio
+            Row(verticalAlignment = Alignment.CenterVertically){
+                Checkbox(
+                    checked = activDropmenu ,
+                    onCheckedChange =  {activDropmenu= it
+                         if (!it) repeatOption = "Nunca"},
+                    modifier = Modifier.padding(6.dp),
+                    enabled = true,
+                    colors = CheckboxDefaults.colors()
+                )
+
+                Text(
+                    text = "Repetir Recordatorio",
+                    color = Color(0xCCC7719B), fontSize = 18.sp, fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            Box {
+                OutlinedTextField(
+                    value = repeatOption,
+                    onValueChange = {},
+                    label = { Text("Selecciona una opción") },
+                    readOnly = true,
+                    enabled = activDropmenu,
+                    trailingIcon = {
+                        if (activDropmenu) {
+                            IconButton(onClick = { expanded = !expanded }) {
+                                Icon(
+                                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                                    contentDescription = null
+                                )
+                            }
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.Lock,
+                                contentDescription = null,
+                                tint = Color.Gray
+                            )
+                        }
+                    },
+
+                    colors = OutlinedTextFieldDefaults.colors(
+                    disabledContainerColor = Color(0xFFE0E0E0), // darker gray when disabled
+                    disabledTextColor = Color(0xFF7A7A7A),     // readable dark gray text
+                    focusedContainerColor = Color(0xFFFFF5F5), // light pink when active
+                    unfocusedContainerColor = Color(0xFFFCE4EC) // subtle pink when idle
+                )
+
+                )
+
+                DropdownMenu(
+                    expanded = expanded && activDropmenu,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    options.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(option) },
+                            onClick = {
+                                repeatOption = option
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+
+            }
+
+
 
 
                     Spacer(modifier = Modifier.height(16.dp))
 
             FilledTonalButton(
                 onClick = {
-                    onSaveReminder("a",title,description,date,time.toInt(),repeat.toInt(),context)
+                    onSaveReminder("a",title,description,date,time.toInt(),
+                        repeatOption,context)
                     //println("Se ha registrado exitosamente")
 
                 },
