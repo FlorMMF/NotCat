@@ -3,16 +3,17 @@ package com.Mtimes.notcat.navigation
 
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.Mtimes.notcat.data.UserDB
+import com.Mtimes.notcat.presentation.ListScreen
 import com.Mtimes.notcat.presentation.LoginScreen
 import com.Mtimes.notcat.presentation.PrincipalScreen
 import com.Mtimes.notcat.presentation.RegisterScreen
+import com.Mtimes.notcat.presentation.ReminderScreen
 
 @Composable
 fun AppNavHost(
@@ -63,7 +64,16 @@ fun AppNavHost(
         }
 
         composable(Screen.principal.route){
-            PrincipalScreen(navController, dbHelper, modifier)
+            PrincipalScreen( navController, dbHelper)
         }
+
+        composable(Screen.reminder.route){
+            ReminderScreen()
+        }
+
+        composable(Screen.lists.route){
+            ListScreen()
+        }
+
     }
 }
