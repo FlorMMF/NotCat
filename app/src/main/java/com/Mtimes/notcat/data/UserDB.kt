@@ -103,6 +103,28 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         return b
     }
 
+    fun checkPass(user_password: String): Boolean {
+        val sqLiteDatabase = this.readableDatabase
+
+        val columns = arrayOf<String>(PASS_COL)
+        val selection: String = PASS_COL + " LIKE ?" // WHERE nombre LIKE ?
+        val selectionArgs = arrayOf(user_password)
+
+        val c = sqLiteDatabase.query(
+            TABLE_NAME,
+            columns,
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
+        )
+
+        val b = c.count > 0
+        c.close()
+        return b
+    }
+
 
         //para las variables de objetos
         companion object {
