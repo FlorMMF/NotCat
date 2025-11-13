@@ -22,7 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.Mtimes.notcat.data.UserDB
-import com.Mtimes.notcat.navigation.AppNavHost
 import com.Mtimes.notcat.ui.theme.Pink40
 import com.Mtimes.notcat.ui.theme.Pink80
 
@@ -31,7 +30,8 @@ import com.Mtimes.notcat.ui.theme.Pink80
 @Composable
 fun PrincipalScreen(
     navController: NavHostController,
-    dbHelper: UserDB
+    dbHelper: UserDB,
+    modifier: Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val navController = rememberNavController()
@@ -46,14 +46,14 @@ fun PrincipalScreen(
             }
         }
     ) { innerPadding ->
+/*
 
-
-        AppNavHost(
+        PrincipalScreen(
             navController = navController,
-            modifier = Modifier.padding(innerPadding),
-            dbHelper = dbHelper
+            dbHelper = dbHelper,
+            modifier = Modifier.padding(innerPadding)
         )
-
+*/
     }
 }
 

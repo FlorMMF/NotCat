@@ -3,6 +3,7 @@ package com.Mtimes.notcat.navigation
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -62,7 +63,7 @@ fun AppNavHost(
         }
 
         composable(Screen.principal.route){
-            PrincipalScreen(navController, dbHelper)
+            PrincipalScreen(navController, dbHelper, modifier)
         }
     }
 }
