@@ -33,7 +33,7 @@ fun AppNavHost(
                             launchSingleTop = true
                         }
                     } else  {
-                        Toast.makeText(context, "Correo ya registrado", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Datos incorrectos", Toast.LENGTH_SHORT).show()
                     }
             })
         }
