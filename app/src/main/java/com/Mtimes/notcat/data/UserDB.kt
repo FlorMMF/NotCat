@@ -6,6 +6,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
+import com.Mtimes.notcat.model.UserVM
 
 
 class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
@@ -74,9 +75,38 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             return id
         }
 
+    fun getUserById(id: Int): UserVM? {
+        val db = this.readableDatabase
+        var user: UserVM? = null
+
+        val cursor = db.rawQuery(
+            "SELECT * FROM $TABLE_NAME WHERE $ID_COL = ?",
+            arrayOf(id.toString())
+        )
+
+        if (cursor.moveToFirst()) {
+            val userId = cursor.getInt(cursor.getColumnIndexOrThrow(ID_COL))
+            val name = cursor.getString(cursor.getColumnIndexOrThrow(NAME_COL))
+            val email = cursor.getString(cursor.getColumnIndexOrThrow(EMAIL_COL))
+            val password = cursor.getString(cursor.getColumnIndexOrThrow(PASS_COL))
+
+            user = UserVM(
+                id = userId,
+                nomUs = name,
+                email = email,
+                pass = password
+            )
+        }
+
+        cursor.close()
+        db.close()
+
+        return user
+    }
 
 
-    fun checkUser(user_name: String): Boolean {
+
+        fun checkUser(user_name: String): Boolean {
         val sqLiteDatabase = this.readableDatabase
 
         val columns = arrayOf<String>(NAME_COL)
@@ -120,7 +150,7 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         return b
     }
 
-    fun addRemind (user: String, title: String, descripition: String, date: String, time: Int, repeat: Int): Long{
+    fun addRemind (user: String, title: String, descripition: String, date: String, time: Int, repeat: String): Long{
         //la fun insert deberia devolver el id (0...n) si no lo hace se manda -1 como error
         var id: Long = -1
 

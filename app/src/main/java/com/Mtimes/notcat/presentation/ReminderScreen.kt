@@ -54,14 +54,35 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.viewmodel.compose.viewModel
 import java.util.Calendar
+import com.Mtimes.notcat.model.ReminderViewModel
+import com.Mtimes.notcat.data.ReminderRepository
+import com.Mtimes.notcat.data.UserDB
+import com.Mtimes.notcat.model.ReminderViewModelFactory
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun ReminderScreen(navController: NavHostController, onSaveReminder: (String, String, String, String, Int, String, Context) -> Unit){
+fun ReminderScreen(navController: NavHostController,UserID: Int, onSaveReminder: (String, String, String, String, Int, String, Context) -> Unit){
     val context = LocalContext.current
+
+    // Build DB → Repository → ViewModel
+    val db = remember { UserDB(context, null) }
+    val repository = remember { ReminderRepository(db) }
+
+    val viewModel: ReminderViewModel = viewModel(
+        factory = ReminderViewModelFactory(repository)
+    )
+
+    val user = viewModel.user
+
+    // Load user once
+    LaunchedEffect(UserID) {
+        viewModel.loadUser(UserID)
+    }
     val datePickerState = rememberDatePickerState()
 
     var title by remember { mutableStateOf("") }
@@ -284,8 +305,10 @@ fun ReminderScreen(navController: NavHostController, onSaveReminder: (String, St
 
             FilledTonalButton(
                 onClick = {
-                    onSaveReminder("a",title,description,date,time.toInt(),
-                        repeatOption,context)
+                    if (user != null) {
+                        onSaveReminder(user.nomUs,title,description,date,time.toInt(),
+                            repeatOption,context)
+                    }
                     //println("Se ha registrado exitosamente")
 
                 },
@@ -308,5 +331,5 @@ fun ReminderScreen(navController: NavHostController, onSaveReminder: (String, St
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ReminderScreenPreview() {
-    ReminderScreen(navController = rememberNavController(), onSaveReminder = { _, _, _, _, _, _, _ ->})
+    ReminderScreen(navController = rememberNavController(),-1, onSaveReminder = { _, _, _, _, _, _, _ ->})
 }

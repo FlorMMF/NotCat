@@ -6,10 +6,12 @@ import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.Mtimes.notcat.data.UserDB
 import com.Mtimes.notcat.presentation.ListScreen
+import androidx.navigation.navArgument
 import com.Mtimes.notcat.presentation.LoginScreen
 import com.Mtimes.notcat.presentation.PrincipalScreen
 import com.Mtimes.notcat.presentation.RegisterScreen
@@ -67,13 +69,25 @@ fun AppNavHost(
             PrincipalScreen( navController, dbHelper)
         }
 
-        composable(Screen.reminder.route){
-            ReminderScreen()
-        }
 
         composable(Screen.lists.route){
             ListScreen()
         }
 
+
+        composable(
+            route = "reminder/{userId}",
+            arguments = listOf(
+                navArgument("userId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+
+            val userId = backStackEntry.arguments?.getInt("userId") ?: -1
+
+            ReminderScreen(
+                navController = navController,
+                UserID = userId,
+                onSaveReminder = { _, _, _, _, _, _, _ ->})
+        }
     }
 }
