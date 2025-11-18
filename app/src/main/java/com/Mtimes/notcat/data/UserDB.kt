@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
+import com.Mtimes.notcat.model.ListVM
 
 
 class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
@@ -122,16 +123,14 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         c.close()
         return b
     }
+    fun checkUser(email: String, password: String): Long {
+        val db = this.readableDatabase
 
-    fun checkPass(user_password: String): Boolean {
-        val sqLiteDatabase = this.readableDatabase
-   
+        val columns = arrayOf(ID_COL)
+        val selection = "$EMAIL_COL = ? AND $PASS_COL = ?"
+        val selectionArgs = arrayOf(email, password)
 
-        val columns = arrayOf<String>(PASS_COL)
-        val selection: String = PASS_COL + " LIKE ?" // WHERE nombre LIKE ?
-        val selectionArgs = arrayOf(user_password)
-
-        val c = sqLiteDatabase.query(
+        val cursor = db.query(
             TABLE_NAME,
             columns,
             selection,
@@ -141,14 +140,21 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             null
         )
 
-        val b = c.count > 0
-        c.close()
-        return b
+        var userId: Long = -1
+
+        if (cursor.moveToFirst()) {
+            userId = cursor.getLong(cursor.getColumnIndexOrThrow(ID_COL))
+        }
+
+        cursor.close()
+        return userId
     }
 
 
 
- fun addList(userID: Int, name: String): Long{
+
+
+    fun addList(userID: Int, name: String): Long{
         var id: Long = -1
         val databaseAccess : SQLiteDatabase = getWritableDatabase()
         val values = ContentValues().apply{
@@ -182,8 +188,36 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         return id
     }
 
+    fun getListById(listId: Int): ListVM? {
+        val db = readableDatabase
 
-        //para las variables de objetos
+        val cursor = db.query(
+            TABLE_LIST,
+            arrayOf(ID_LIST, USER_LIST, NAME_LIST),
+            "$ID_LIST = ?",
+            arrayOf(listId.toString()),
+            null,
+            null,
+            null
+        )
+
+        var listInfo: ListVM? = null
+
+        if (cursor.moveToFirst()) {
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow(ID_LIST))
+            val user = cursor.getInt(cursor.getColumnIndexOrThrow(USER_LIST))
+            val name = cursor.getString(cursor.getColumnIndexOrThrow(NAME_LIST))
+
+            listInfo = ListVM(id, user, name)
+        }
+
+        cursor.close()
+        return listInfo
+    }
+
+
+
+    //para las variables de objetos
         companion object {
             private const val DATABASE_NAME = "REMINDERS_APP"
             private const val DATABASE_VERSION = 7

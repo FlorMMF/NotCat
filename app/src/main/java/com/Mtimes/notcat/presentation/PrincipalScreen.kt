@@ -9,7 +9,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -24,7 +23,7 @@ import com.Mtimes.notcat.navigation.Screen
 // Pantalla raíz que incluye drawer + scaffold + NavHost
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PrincipalScreen(navController: NavHostController, dbHelper: UserDB) {
+fun PrincipalScreen(navController: NavHostController, dbHelper: UserDB, userId: Long) {
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()

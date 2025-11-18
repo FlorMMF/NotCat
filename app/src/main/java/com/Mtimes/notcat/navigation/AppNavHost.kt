@@ -6,14 +6,17 @@ import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.Mtimes.notcat.data.UserDB
 import com.Mtimes.notcat.presentation.ListScreen
 import com.Mtimes.notcat.presentation.LoginScreen
 import com.Mtimes.notcat.presentation.PrincipalScreen
 import com.Mtimes.notcat.presentation.RegisterScreen
 import com.Mtimes.notcat.presentation.ReminderScreen
+import com.Mtimes.notcat.presentation.addListScreen
 
 @Composable
 fun AppNavHost(
@@ -30,11 +33,12 @@ fun AppNavHost(
         composable(Screen.login.route) {
             LoginScreen(
                 navController = navController, onEntrar ={ correo, contra, context ->
-                    if (dbHelper.checkEmail(correo) && dbHelper.checkPass(contra)) {
-                        navController.navigate(Screen.principal.route) {
-                            launchSingleTop = true
-                        }
-                    } else  {
+                    val userId = dbHelper.checkUser(correo, contra)
+
+                    if (userId != -1L) {
+                        navController.navigate("${Screen.principal.route}/$userId")
+
+                    } else {
                         Toast.makeText(context, "Datos incorrectos", Toast.LENGTH_SHORT).show()
                     }
             })
@@ -63,16 +67,44 @@ fun AppNavHost(
 
         }
 
-        composable(Screen.principal.route){
-            PrincipalScreen( navController, dbHelper)
+        composable(
+            route = Screen.principal.route,
+            arguments = listOf(
+                navArgument("userId") { type = NavType.LongType }
+            )
+        ) { backStackEntry ->
+
+            val userId = backStackEntry.arguments?.getLong("userId") ?: -1L
+
+            PrincipalScreen(
+                navController = navController,
+                dbHelper = dbHelper,
+                userId = userId
+            )
         }
+
 
         composable(Screen.reminder.route){
             ReminderScreen()
         }
 
-        composable(Screen.lists.route){
-            ListScreen()
+        composable(route = Screen.lists.route,
+            arguments = listOf(
+                navArgument("userId") { type = NavType.LongType }
+            )
+        ) { backStackEntry ->
+
+            val userId = backStackEntry.arguments?.getLong("userId") ?: -1L
+
+            ListScreen(
+                navController = navController,
+                dbHelper = dbHelper,
+                userId = userId
+            )
+        }
+
+        composable(Screen.addList.route) {
+            addListScreen()
         }
 
     }

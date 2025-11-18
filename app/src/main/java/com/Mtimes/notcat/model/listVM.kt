@@ -1,4 +1,7 @@
 package com.Mtimes.notcat.model
 
-class listVM {
-}
+data class ListVM(
+    val id: Int,
+    val userId: Int,
+    val name: String
+)
