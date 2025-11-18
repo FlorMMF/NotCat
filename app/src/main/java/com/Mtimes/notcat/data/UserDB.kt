@@ -150,6 +150,41 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         return userId
     }
 
+    fun addList(userID: Int, name: String): Long{
+        var id: Long = -1
+
+        val databaseAccess : SQLiteDatabase = getWritableDatabase()
+        val values = ContentValues().apply{
+            put(USER_LIST, userID)
+           put(NAME_LIST, name)
+        }
+
+        try{
+            id= databaseAccess.insert(TABLE_LIST, null, values)
+        }catch(e: Exception){
+            Log.e("DB", "Error al guardar la lista", e)
+        }
+        return id
+    }
+
+    fun addItemList(name: String, quantity: Int, purchased: Boolean): Long{
+        var id: Long = -1
+
+        val databaseAccess : SQLiteDatabase = getWritableDatabase()
+        val values = ContentValues().apply{
+           put(NAME_ITEM, name)
+            put(QUANTITY_ITEM, quantity)
+            put(PURCHASED_ITEM, purchased)
+        }
+
+        try{
+            id= databaseAccess.insert(TABLE_ITEM, null, values)
+        }catch(e: Exception){
+            Log.e("DB", "Error al guardar el item", e)
+        }
+        return id
+    }
+
 
 
 
