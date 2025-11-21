@@ -61,7 +61,7 @@ fun LoginScreen(navController: NavHostController, onEntrar: (String, String, Con
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Bottom,
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text("Iniciar sesión",color = Color(0xCCC7719B), fontSize = 24.sp, fontWeight = FontWeight.Bold)
