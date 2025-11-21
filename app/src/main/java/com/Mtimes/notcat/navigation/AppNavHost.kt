@@ -32,11 +32,12 @@ fun AppNavHost(
         composable(Screen.login.route) {
             LoginScreen(
                 navController = navController, onEntrar ={ correo, contra, context ->
-                    if (dbHelper.checkEmail(correo) && dbHelper.checkPass(contra)) {
-                        navController.navigate(Screen.principal.route) {
-                            launchSingleTop = true
-                        }
-                    } else  {
+                    val userId = dbHelper.checkUser(correo, contra)
+
+                    if (userId != -1L) {
+                        navController.navigate("${Screen.principal.route}/$userId")
+
+                    } else {
                         Toast.makeText(context, "Datos incorrectos", Toast.LENGTH_SHORT).show()
                     }
             })

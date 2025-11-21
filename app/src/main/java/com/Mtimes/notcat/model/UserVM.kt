@@ -28,7 +28,7 @@ class RegisterActivity: ComponentActivity(){
             val navController = rememberNavController()
             val dbHelper = UserDB(applicationContext, null)
             RegisterScreen(navController, onRegistrar = { nomUsuario, correo, contra, confirmContra, context ->
-                if (dbHelper.checkUser(nomUsuario)) {
+                if (dbHelper.checkEmail(nomUsuario)) {
                     Toast.makeText(context, "Usuario ya registrado", Toast.LENGTH_SHORT).show()
                 } else if (dbHelper.checkEmail(correo)) {
                     Toast.makeText(context, "Correo ya registrado", Toast.LENGTH_SHORT).show()

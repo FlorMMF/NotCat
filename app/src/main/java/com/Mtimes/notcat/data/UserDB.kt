@@ -49,6 +49,7 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             try {
                 Log.d("DB", "onUpgrade: borrando tabla antigua y recreando")
                 db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
+                db.execSQL("DROP TABLE IF EXISTS $TABLE_RMND")
                 onCreate(db)
             } catch (e: Exception) {
                 Log.e("DB", "onUpgrade: error durante upgrade", e)
@@ -127,6 +128,33 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         val b = c.count > 0
         c.close()
         return b
+    }
+
+    fun checkUser(email: String, password: String): Long {
+        val db = this.readableDatabase
+
+        val columns = arrayOf(ID_COL)
+        val selection = "$EMAIL_COL = ? AND $PASS_COL = ?"
+        val selectionArgs = arrayOf(email, password)
+
+        val cursor = db.query(
+            TABLE_NAME,
+            columns,
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
+        )
+
+        var userId: Long = -1
+
+        if (cursor.moveToFirst()) {
+            userId = cursor.getLong(cursor.getColumnIndexOrThrow(ID_COL))
+        }
+
+        cursor.close()
+        return userId
     }
 
     fun checkEmail(user_email: String): Boolean {
@@ -224,7 +252,7 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     //para las variables de objetos
         companion object {
             private const val DATABASE_NAME = "REMINDERS_APP"
-            private const val DATABASE_VERSION = 7
+            private const val DATABASE_VERSION = 8
             const val TABLE_NAME = "user_info"
             const val ID_COL = "id"
             const val NAME_COL = "name"
