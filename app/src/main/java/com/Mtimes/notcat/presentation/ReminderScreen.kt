@@ -71,7 +71,10 @@ fun ReminderScreen(navController: NavHostController,UserID: Int, onSaveReminder:
 
     // Build DB → Repository → ViewModel
     val db = remember { UserDB(context, null) }
-    val repository = remember { ReminderRepository(db) }
+    val repository = remember { ReminderRepository(
+        db,
+        context
+    ) }
 
     val viewModel: ReminderViewModel = viewModel(
         factory = ReminderViewModelFactory(repository)

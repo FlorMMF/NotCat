@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import com.Mtimes.notcat.model.UserVM
+import com.Mtimes.notcat.notification.programarNotificacionBD
 
 
 class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
@@ -34,7 +35,7 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                                 "$TITLE_RMND TEXT, " +
                                 "$DESCRIPTION_RMND TEXT," +
                                 "$DATE_RMND TEXT,"
-                                + "$TIME_RMND INTEGER,"
+                                + "$TIME_RMND TEXT,"
                                 + "$REPEAT_RMND INTEGER)"
 
                     )
@@ -150,7 +151,14 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         return b
     }
 
-    fun addRemind (user: String, title: String, descripition: String, date: String, time: Int, repeat: String): Long{
+    fun addRemind (
+        user: String,
+        title: String,
+        descripition: String,
+        date: String,
+        time: Int,
+        repeat: String,
+        context: Context): Long{
         //la fun insert deberia devolver el id (0...n) si no lo hace se manda -1 como error
         var id: Long = -1
 
@@ -167,11 +175,51 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
         try{
             id= databaseAccess.insert(TABLE_RMND, null, values)
+            /*if (id != -1L) {
+
+                programarNotificacionBD(
+                    context = context,
+                    fecha = date,
+                    hora = time,
+                    titulo = title,
+                    mensaje = description
+                )
+            }*/
         }catch(e: Exception){
             Log.e("DB", "Error al guardar el usuario", e)
         }
+
+
         return id
     }
+
+    fun programarRecordatorio(context: Context, id: Int) {
+        val db = this.readableDatabase
+
+        val cursor = db.rawQuery(
+            "SELECT $TITLE_RMND, $DESCRIPTION_RMND, $DATE_RMND, $TIME_RMND FROM $TABLE_RMND WHERE $ID_RMND = ?",
+            arrayOf(id.toString())
+        )
+
+        if (cursor.moveToFirst()) {
+            val titulo = cursor.getString(0)
+            val descripcion = cursor.getString(1)
+            val fechaTexto = cursor.getString(2)
+            val horaTexto = cursor.getString(3)
+
+            programarNotificacionBD(
+                context,
+                fechaTexto,
+                horaTexto,
+                titulo,
+                descripcion
+            )
+        }
+
+        cursor.close()
+        db.close()
+    }
+
 
     //para las variables de objetos
         companion object {
