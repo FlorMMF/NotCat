@@ -1,6 +1,5 @@
 package com.Mtimes.notcat.presentation
 
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -41,8 +39,7 @@ import com.Mtimes.notcat.navigation.Screen
 
 
 @Composable
-fun LoginScreen(navController: NavHostController, onEntrar: (String, String, Context) -> Unit) {
-    val context = LocalContext.current
+fun LoginScreen(navController: NavHostController) {
     var correo by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
     val errorMessage by remember { mutableStateOf("") }
@@ -86,7 +83,7 @@ fun LoginScreen(navController: NavHostController, onEntrar: (String, String, Con
 
             FilledTonalButton(
                 onClick = {
-                    onEntrar(correo, contrasena, context)
+
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xCCC7719B),
@@ -123,8 +120,5 @@ fun LoginScreen(navController: NavHostController, onEntrar: (String, String, Con
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(
-        navController = rememberNavController(),
-        onEntrar = TODO(),
-    )
+    LoginScreen(navController = rememberNavController())
 }

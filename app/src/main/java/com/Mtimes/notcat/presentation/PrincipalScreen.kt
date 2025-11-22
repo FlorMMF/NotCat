@@ -1,104 +1,12 @@
 package com.Mtimes.notcat.presentation
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.runtime.*
+
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.launch
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import com.Mtimes.notcat.data.UserDB
-import com.Mtimes.notcat.navigation.Screen
 
-// Pantalla raíz que incluye drawer + scaffold + NavHost
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun PrincipalScreen(navController: NavHostController, dbHelper: UserDB) {
-
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            DrawerContent(navController = navController)
-        }
-    ) {
-
-        Scaffold(
-            topBar = {
-                TopBar(
-                    onMenuClick = {
-                        //
-                        scope.launch { drawerState.open() }
-                    }
-
-                )
-            }
-        ) { innerPadding ->
-            // Aquí pones tu NavHost; recuerda aplicar innerPadding
-
-        }
-    }
-}
 
 @Composable
-fun DrawerContent(navController: NavHostController) {
-    ModalDrawerSheet {
-        Text("Menú principal", modifier = Modifier.padding(16.dp))
-        Divider()
-        NavigationDrawerItem(
-            label = { Text("Recordatorios") },
-            selected = false,
-            onClick = {
-                navController.navigate(Screen.reminder.route) { launchSingleTop = true }
-            }
-        )
-        Divider()
-        NavigationDrawerItem(
-            label = { Text("Listas") },
-            selected = false,
-            onClick = {
-                navController.navigate(Screen.lists.route) { launchSingleTop = true }
-            }
-        )
-    }
+fun PrincipalScreen(
+    navController: NavHostController,
+    padding: Modifier) {
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TopBar(
-    onMenuClick: () -> Unit
-
-) {
-    CenterAlignedTopAppBar(
-        navigationIcon = {
-            IconButton(onClick = onMenuClick) {
-                Icon(imageVector = Icons.Filled.Menu, contentDescription = "Menu")
-            }
-        },
-        title = { Text("NotCat") },
-        actions = {
-            IconButton(onClick = {}) {
-                Icon(Icons.Filled.AccountCircle, contentDescription = "Cuenta")
-            }
-        }
-    )
-}
-
-
-
-
-
-

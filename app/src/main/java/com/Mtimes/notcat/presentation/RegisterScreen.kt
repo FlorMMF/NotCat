@@ -132,16 +132,6 @@ fun RegisterScreen(navController: NavHostController, onRegistrar: (String, Strin
                 Text("Registrar")
             }
 
-            TextButton(
-                onClick = {
-                    navController.navigate(Screen.login.route) {
-                        launchSingleTop = true
-                    }
-                }
-            ) {
-                Text("Ya te registraste? Entra a tu cuenta")
-            }
-
             if (errorMessage.isNotEmpty()) {
                 Text(
                     text = errorMessage,

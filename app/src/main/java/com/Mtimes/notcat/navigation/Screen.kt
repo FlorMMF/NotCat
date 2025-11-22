@@ -13,12 +13,4 @@ sealed class Screen (
     @Serializable
     object register : Screen(route = "register_screen", label = "Register")
 
-    @Serializable
-    object principal : Screen (route = "principal_screen", label = "Prinicipal")
-
-    @Serializable
-    object reminder : Screen (route = "reminder_screen", label = "Reminder")
-
-    @Serializable
-    object lists : Screen (route = "lists_screen", label = "Lists")
 }
