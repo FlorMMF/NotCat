@@ -12,7 +12,6 @@ import com.Mtimes.notcat.data.UserDB
 import com.Mtimes.notcat.presentation.RegisterScreen
 
 data class UserVM(
-    val id: Int,
     val nomUs: String,
     val email: String,
     val pass: String
