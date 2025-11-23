@@ -8,9 +8,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.Mtimes.notcat.data.UserDB
 import com.Mtimes.notcat.navigation.AppNavHost
+import com.Mtimes.notcat.presentation.PrincipalScreen
 import com.Mtimes.notcat.ui.theme.NotCatTheme
 
 class MainActivity : ComponentActivity() {
@@ -24,7 +26,10 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize())
                 {
-                    AppNavHost(
+                   /* AppNavHost(//vista al LoginScreen
+                        navController = navController, dbHelper = dbHelper
+                    )*/
+                    PrincipalScreen(//para poder ver la Principal Screen porque no funciona Preview
                         navController = navController, dbHelper = dbHelper
                     )
                 }

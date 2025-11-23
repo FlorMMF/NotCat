@@ -24,8 +24,10 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,6 +39,7 @@ import com.Mtimes.notcat.navigation.Screen
 // Pantalla raíz que incluye drawer + scaffold + NavHost
 @OptIn(ExperimentalMaterial3Api::class)
 
+
 @Composable
 fun PrincipalScreen(navController: NavHostController, dbHelper: UserDB) {
 
@@ -46,7 +49,7 @@ fun PrincipalScreen(navController: NavHostController, dbHelper: UserDB) {
     Box(
         modifier = Modifier.fillMaxSize()
     ){
-        Image(
+        Image(//ya se puede ver el fondo
             painter = painterResource(id = R.drawable.login_background),
             contentDescription = null,
             contentScale = ContentScale.Crop,
@@ -55,29 +58,28 @@ fun PrincipalScreen(navController: NavHostController, dbHelper: UserDB) {
 
         ModalNavigationDrawer (
             drawerState = drawerState,
-            drawerContent = {
-                DrawerContent(navController = navController)
+            drawerContent = {//se agrego esto y ya se puede ver el fondo
+                ModalDrawerSheet(drawerContainerColor = Color(0xAA000000)) {DrawerContent(navController = navController)}
+
             }
         ) {
 
             Scaffold(
+                containerColor = Color.Transparent,
+                contentColor = Color.White,
                 topBar = {
                     TopBar(
                         onMenuClick = {
-                            //
                             scope.launch { drawerState.open() }
                         }
-
                     )
                 }
             ) { innerPadding ->
-
                 numList(navController, innerPadding)
-                // Aquí pones tu NavHost; recuerda aplicar innerPadding
-
             }
         }
     }
+
 }
 ///*************************************************************************************************
 @Composable
@@ -126,15 +128,20 @@ fun TopBar(
 
 @Composable
 fun numList(navController: NavHostController, paddingValues: PaddingValues){
-    Card(
-        modifier = Modifier.size(width = 100.dp, height = 100.dp)
+    Box(
+        modifier = Modifier.padding(paddingValues)//se agrego y se puede ver la tarjeta de num de listas
     ){
-        Text(text = "\tNúmero de  Listas",
-            fontSize = 10.sp,
-            textAlign = TextAlign.Start
-        )
+        Card(
+            modifier = Modifier.size(width = 100.dp, height = 100.dp)
+        ){
+            Text(text = "\tNúmero de  Listas",
+                fontSize = 10.sp,
+                textAlign = TextAlign.Start
+            )
 
+        }
     }
+
 }
 
 @Composable
@@ -158,15 +165,19 @@ fun ToDo(){
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true, showSystemUi = true)//la preview sigue sin funcionar, se esta usando la conexion directa con el celular para poder visualizar la Screen
 @Composable
 fun PrincipalScreenPreview() {
     PrincipalScreen(
-        navController = rememberNavController()
-
-
+        navController = rememberNavController(),
+        dbHelper = UserDB(
+            context = LocalContext.current,
+            factory = TODO()
+        )
     )
 }
+
+//class FakeUserDB : UserDB
 
 
 
