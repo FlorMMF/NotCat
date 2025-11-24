@@ -3,9 +3,14 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.*
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
@@ -20,10 +25,12 @@ import kotlinx.coroutines.launch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.AlertDialogDefaults.containerColor
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -35,6 +42,8 @@ import androidx.compose.ui.unit.sp
 import com.Mtimes.notcat.R
 import com.Mtimes.notcat.data.UserDB
 import com.Mtimes.notcat.navigation.Screen
+import androidx.compose.foundation.layout.Row
+
 
 // Pantalla raíz que incluye drawer + scaffold + NavHost
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,6 +54,8 @@ fun PrincipalScreen(navController: NavHostController, dbHelper: UserDB) {
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    val imagePainter = painterResource(id = R.drawable.imagen_gatito)
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -75,7 +86,35 @@ fun PrincipalScreen(navController: NavHostController, dbHelper: UserDB) {
                     )
                 }
             ) { innerPadding ->
-                numList(navController, innerPadding)
+                Column(
+                    modifier = Modifier.padding(innerPadding).fillMaxSize()
+                ){
+                    Row(
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp, vertical = 24.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        numList(navController)
+                        Spacer(modifier = Modifier.width(32.dp))
+                        Image(
+                            painter = painterResource(id = R.drawable.imagen_gatito),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(width = 120.dp, height = 120.dp)
+                                //.offset(x = 200.dp, y = 0.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text(
+                        text = "Tareas Pendientes:",
+                        fontSize = 18.sp,
+                        color = Color.Black,
+                        modifier = Modifier/*.offset(x = 50.dp, y = 30.dp)*/
+                            .padding(start = 50.dp, bottom = 4.dp)
+                    )
+                    ToDo()
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
             }
         }
     }
@@ -127,12 +166,22 @@ fun TopBar(
 }
 
 @Composable
-fun numList(navController: NavHostController, paddingValues: PaddingValues){
+fun numList(navController: NavHostController){
+    val ColorPaletaRosa = Color(0xCCC7719B)
+
+    val offsetX = 30.dp
+    val offsetY = 50.dp
     Box(
-        modifier = Modifier.padding(paddingValues)//se agrego y se puede ver la tarjeta de num de listas
+        modifier = Modifier
+        /*modifier = Modifier/*.padding(paddingValues)*///se agrego y se puede ver la tarjeta de num de listas
+            .offset(x = offsetX, y = offsetY)*/
     ){
         Card(
-            modifier = Modifier.size(width = 100.dp, height = 100.dp)
+
+            modifier = Modifier.size(width = 140.dp, height = 140.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = ColorPaletaRosa
+            )
         ){
             Text(text = "\tNúmero de  Listas",
                 fontSize = 10.sp,
@@ -145,23 +194,31 @@ fun numList(navController: NavHostController, paddingValues: PaddingValues){
 }
 
 @Composable
-fun ToDo(){
-    OutlinedCard(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
-        border = BorderStroke(1.dp, Color.Black),
-        modifier = Modifier.size(width = 240.dp, height = 100.dp)
+fun ToDo(){//Card de tareas pendientes
+    val offsetX = 20.dp
+    val offsetY = 50.dp
+
+    Box(
+        modifier = Modifier/*.padding(innerPadding)*/
+            .offset(x = offsetX)
     ){
-        Text(text = "Por hacer",//deberia salir el nombre de la tarea
-            modifier = Modifier.padding(8.dp),
-            textAlign = TextAlign.Center
-        )
-        Text(text = "Tengo que ir a hacer mandado despues de recoger al niño a la escuela",//descripccion de la tarea
-            modifier = Modifier.padding (8.dp),
-            textAlign = TextAlign.Justify,
-            fontSize = 10.sp
-        )
+        OutlinedCard(
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
+            border = BorderStroke(1.dp, Color.Black),
+            modifier = Modifier.size(width = 320.dp, height = 100.dp)
+        ){
+            Text(text = "Por hacer",//deberia salir el nombre de la tarea
+                modifier = Modifier.padding(8.dp),
+                textAlign = TextAlign.Center
+            )
+            Text(text = "Tengo que ir a hacer mandado despues de recoger al niño a la escuela",//descripccion de la tarea
+                modifier = Modifier.padding (8.dp),
+                textAlign = TextAlign.Justify,
+                fontSize = 10.sp
+            )
+        }
     }
 }
 
