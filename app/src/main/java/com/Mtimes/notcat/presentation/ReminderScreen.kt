@@ -61,12 +61,13 @@ import com.Mtimes.notcat.model.ReminderViewModel
 import com.Mtimes.notcat.data.ReminderRepository
 import com.Mtimes.notcat.data.UserDB
 import com.Mtimes.notcat.model.ReminderViewModelFactory
+import java.util.Date
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun ReminderScreen(navController: NavHostController,UserID: Int, onSaveReminder: (String, String, String, String, Int, String, Context) -> Unit){
+fun ReminderScreen(navController: NavHostController,UserID: Int, onSaveReminder: (String, String, String, String, String, String, Context) -> Unit){
     val context = LocalContext.current
 
     // Build DB → Repository → ViewModel
@@ -184,9 +185,9 @@ fun ReminderScreen(navController: NavHostController,UserID: Int, onSaveReminder:
                         onDismissRequest = { showDialogC = false },
                         confirmButton = {
                             TextButton(onClick = {
-                                datePickerState.selectedDateMillis?.let {
-                                    val format = SimpleDateFormat("dd/MM/yyyy", Locale("es", "ES"))
-                                    date = format.toString()
+                                datePickerState.selectedDateMillis?.let { millis ->
+                                    val formatter  = SimpleDateFormat("dd/MM/yyyy", Locale("es", "ES"))
+                                    date = formatter.format(Date(millis))
                                 }
                                 showDialogC = false
                             }) {
@@ -309,7 +310,7 @@ fun ReminderScreen(navController: NavHostController,UserID: Int, onSaveReminder:
             FilledTonalButton(
                 onClick = {
                     if (user != null) {
-                        onSaveReminder(user.nomUs,title,description,date,time.toInt(),
+                        onSaveReminder(user.nomUs,title,description,date,time,
                             repeatOption,context)
                     }
                     //println("Se ha registrado exitosamente")

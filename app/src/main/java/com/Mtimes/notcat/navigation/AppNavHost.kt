@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -35,7 +36,8 @@ fun AppNavHost(
                     val userId = dbHelper.checkUser(correo, contra)
 
                     if (userId != -1L) {
-                        navController.navigate("${Screen.principal.route}/$userId")
+                        //navController.navigate("${Screen.principal.route}/$userId")
+                        navController.navigate("reminder_screen/$userId")
 
                     } else {
                         Toast.makeText(context, "Datos incorrectos", Toast.LENGTH_SHORT).show()
@@ -77,18 +79,31 @@ fun AppNavHost(
 
 
         composable(
-            route = "reminder/{userId}",
+            route = "reminder_screen/{userId}",
             arguments = listOf(
                 navArgument("userId") { type = NavType.IntType }
             )
         ) { backStackEntry ->
 
             val userId = backStackEntry.arguments?.getInt("userId") ?: -1
+            val context = LocalContext.current
+            val dbHelper = UserDB(context, null)
 
             ReminderScreen(
                 navController = navController,
                 UserID = userId,
-                onSaveReminder = { _, _, _, _, _, _, _ ->})
+                onSaveReminder = { user, title, description, date, time, repeat, context ->
+                    val result = dbHelper.addReminder(user,title,description,date,time,repeat,context)
+
+                    if (result != -1L) {
+                        Toast.makeText(context, "Recordatorio guardado", Toast.LENGTH_SHORT).show()
+                        Log.d("Reminders", "Reminder saved with ID = $result")
+                    } else {
+                        Toast.makeText(context, "Error al guardar recordatorio", Toast.LENGTH_SHORT).show()
+                        Log.e("Reminders", "Insert returned -1")
+                    }
+                }
+            )
         }
     }
 }

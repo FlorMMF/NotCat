@@ -62,7 +62,7 @@ fun DrawerContent(navController: NavHostController) {
             label = { Text("Recordatorios") },
             selected = false,
             onClick = {
-                navController.navigate(Screen.reminder.route) { launchSingleTop = true }
+                navController.navigate(Screen.Reminder.createRoute(-1)) { launchSingleTop = true }
             }
         )
         Divider()

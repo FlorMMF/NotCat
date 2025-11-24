@@ -179,12 +179,12 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         return b
     }
 
-    fun addRemind (
+    fun addReminder (
         user: String,
         title: String,
         descripition: String,
         date: String,
-        time: Int,
+        time: String,
         repeat: String,
         context: Context): Long{
         //la fun insert deberia devolver el id (0...n) si no lo hace se manda -1 como error
@@ -252,7 +252,7 @@ class UserDB(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     //para las variables de objetos
         companion object {
             private const val DATABASE_NAME = "REMINDERS_APP"
-            private const val DATABASE_VERSION = 8
+            private const val DATABASE_VERSION = 9
             const val TABLE_NAME = "user_info"
             const val ID_COL = "id"
             const val NAME_COL = "name"

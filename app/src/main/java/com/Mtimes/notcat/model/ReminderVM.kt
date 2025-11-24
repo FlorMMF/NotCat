@@ -14,7 +14,7 @@ data class Reminder(
     val title: String,
     val description: String,
     val date: String,
-    val time: Int,
+    val time: String,
     val repeat: String
 )
 

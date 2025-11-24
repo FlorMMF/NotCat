@@ -13,7 +13,7 @@ class ReminderRepository(
     }
 
     fun insertReminder(reminder: Reminder): Long {
-        return dbHelper.addRemind(
+        return dbHelper.addReminder(
             getUserById(reminder.userId).toString(),reminder.
             title, reminder.description,
             reminder.date,
