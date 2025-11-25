@@ -14,7 +14,13 @@ sealed class Screen (
     object register : Screen(route = "register_screen", label = "Register")
 
     @Serializable
-    object principal : Screen (route = "principal_screen", label = "Prinicipal")
+    object principal : Screen(
+        route = "principal_screen/{userId}",
+        label = "Principal"
+    ) {
+        fun createRoute(userId: Long) = "principal_screen/$userId"
+    }
+
 
     @Serializable
     object Reminder : Screen(

@@ -36,8 +36,8 @@ fun AppNavHost(
                     val userId = dbHelper.checkUser(correo, contra)
 
                     if (userId != -1L) {
-                        //navController.navigate("${Screen.principal.route}/$userId")
-                        navController.navigate("reminder_screen/$userId")
+                        navController.navigate("principal_screen/$userId")
+                        //navController.navigate("reminder_screen/$userId")
 
                     } else {
                         Toast.makeText(context, "Datos incorrectos", Toast.LENGTH_SHORT).show()
@@ -68,9 +68,22 @@ fun AppNavHost(
 
         }
 
-        composable(Screen.principal.route){
-            PrincipalScreen( navController, dbHelper)
+        composable(
+            route = Screen.principal.route,
+            arguments = listOf(
+                navArgument("userId") { type = NavType.LongType }
+            )
+        ) { backStackEntry ->
+
+            val userId = backStackEntry.arguments?.getLong("userId") ?: -1L
+
+            PrincipalScreen(
+                navController = navController,
+                dbHelper = dbHelper,
+                userId = userId
+            )
         }
+
 
 
         composable(Screen.lists.route){

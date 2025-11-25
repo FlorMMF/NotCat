@@ -1,4 +1,7 @@
 package com.Mtimes.notcat.presentation
+import android.widget.Toast
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.material3.DrawerValue
@@ -14,17 +17,21 @@ import kotlinx.coroutines.launch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
 import com.Mtimes.notcat.data.UserDB
 import com.Mtimes.notcat.navigation.Screen
 
-// Pantalla raíz que incluye drawer + scaffold + NavHost
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PrincipalScreen(navController: NavHostController, dbHelper: UserDB) {
+fun PrincipalScreen(navController: NavHostController,
+                    dbHelper: UserDB,
+                    userId: Long ) {
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -47,8 +54,22 @@ fun PrincipalScreen(navController: NavHostController, dbHelper: UserDB) {
                 )
             }
         ) { innerPadding ->
-            // Aquí pones tu NavHost; recuerda aplicar innerPadding
 
+            Box(
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                ExtendedFloatingActionButton(
+                    onClick = {  navController.navigate(Screen.Reminder.createRoute(userId.toInt())) } ,
+
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+
+                    icon = { Icon(Icons.Filled.Edit, "Añadir") },
+                    text = { Text(text = "Añadir recordatorio") },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(16.dp)
+                )
+            }
         }
     }
 }
@@ -62,7 +83,7 @@ fun DrawerContent(navController: NavHostController) {
             label = { Text("Recordatorios") },
             selected = false,
             onClick = {
-                navController.navigate(Screen.Reminder.createRoute(-1)) { launchSingleTop = true }
+                //
             }
         )
         Divider()
@@ -96,6 +117,7 @@ fun TopBar(
         }
     )
 }
+
 
 
 
